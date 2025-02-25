@@ -1,11 +1,8 @@
 import asyncio
 import aio_pika
-import os
 from aiogram import Bot, exceptions
 from aiogram.types import Update
 from .config import TELEGRAM_BOT_TOKEN
-
-RABBITMQ_URL = os.getenv("RABBITMQ_URL", "amqp://guest:guest@rabbitmq:5672/")
 
 bot = Bot(token=TELEGRAM_BOT_TOKEN)
 
