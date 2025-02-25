@@ -1,0 +1,51 @@
+services:
+  db:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: mydatabase
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  rabbitmq:
+    image: "rabbitmq:3-management"
+    container_name: "rabbitmq"
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  fastapi:
+    build: .
+    restart: always
+    depends_on:
+      - db
+      - rabbitmq
+    environment:
+      DATABASE_URL: postgresql+asyncpg://myuser:mypassword@db/mydatabase
+      SECRET_KEY: mysecretkey
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+
+  worker:
+    build: .
+    restart: always
+    depends_on:
+      - rabbitmq
+    env_file: 
+      - .env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://myuser:mypassword@db/mydatabase
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672/
+      TELEGRAM_BOT_TOKEN: 7883174777:AAF32OX4Zv7Cjg3XdN5ey2slzua7cJ1bX7I
+    command: ["python3", "app/tasks.py"]
+    volumes:
+      - .:/app
+
+volumes:
+  postgres_data:
