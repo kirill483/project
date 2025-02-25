@@ -2,7 +2,7 @@ import asyncio
 import aio_pika
 from aiogram import Bot, exceptions
 from aiogram.types import Update
-from .config import TELEGRAM_BOT_TOKEN
+from .config import TELEGRAM_BOT_TOKEN, RABBITMQ_URL
 
 bot = Bot(token=TELEGRAM_BOT_TOKEN)
 
